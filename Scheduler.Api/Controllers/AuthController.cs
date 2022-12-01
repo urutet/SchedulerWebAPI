@@ -10,6 +10,7 @@ using Scheduler.Services.User;
 namespace Scheduler.Controllers;
 
 [ApiController]
+[AllowAnonymous]
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
@@ -30,7 +31,6 @@ public class AuthController : ControllerBase
         _studentService = studentService;
     }
 
-    [AllowAnonymous]
     [HttpPost("login")]
     public async Task<ActionResult<AuthData>> Login([FromBody] LoginUser loginUser)
     {

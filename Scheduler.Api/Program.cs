@@ -28,16 +28,18 @@ builder.Services.AddAuthentication(opt =>
     {
         opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
         opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        opt.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
     })
     .AddJwtBearer(options =>
     {
+        options.SaveToken = true;
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
             ValidateLifetime = true,
             ValidateAudience = false,
             ValidateIssuer = false,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt.Key"]))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:SecretKey"]))
         };
     });
 
@@ -64,7 +66,6 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(o =>
     .AddEntityFrameworkStores<SchedulerDbContext>()
     .AddDefaultTokenProviders();
 
-builder.Services.AddMvc();
 builder.Services.AddControllers();
 builder.Services.AddDbContext<SchedulerDbContext>(options =>
     options.UseSqlServer(
@@ -78,6 +79,7 @@ builder.Services.AddSingleton<IUnitOfWorkFactory<UnitOfWork>, UnitOfWorkFactory>
 builder.Services.AddSingleton<IJwtGenerator, JwtGenerator>();
 builder.Services.AddSingleton<IAuthService, AuthService>();
 builder.Services.AddSingleton<IStudentService, StudentService>();
+builder.Services.AddSingleton<ITeacherService, TeacherService>();
 
 builder.Services.AddCors(options =>
 {
@@ -100,13 +102,13 @@ if (!app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+app.UseCors();
+app.UseRouting();
 
 app.UseAuthorization();
 app.UseAuthentication();
 
-app.MapControllers();
-
+app.UseEndpoints(o => o.MapControllers());
 app.Run();
 
 static void InitializeDatabase(IServiceProvider serviceProvider)
