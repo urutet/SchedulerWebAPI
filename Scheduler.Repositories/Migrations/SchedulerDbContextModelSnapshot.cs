@@ -243,7 +243,7 @@ namespace Scheduler.Repositories.Migrations
 
                     b.HasIndex("Type");
 
-                    b.ToTable("Auditoria", (string)null);
+                    b.ToTable("Auditoria");
                 });
 
             modelBuilder.Entity("Scheduler.DomainModel.Model.Schedule.ClassTime", b =>
@@ -251,8 +251,9 @@ namespace Scheduler.Repositories.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("Day")
-                        .HasColumnType("int");
+                    b.Property<string>("Day")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<TimeSpan>("EndTime")
                         .HasColumnType("time");
@@ -264,7 +265,7 @@ namespace Scheduler.Repositories.Migrations
 
                     b.HasIndex("Day");
 
-                    b.ToTable("ClassTimes", (string)null);
+                    b.ToTable("ClassTimes");
                 });
 
             modelBuilder.Entity("Scheduler.DomainModel.Model.Schedule.Schedule", b =>
@@ -284,7 +285,7 @@ namespace Scheduler.Repositories.Migrations
                     b.HasIndex("GroupId")
                         .IsUnique();
 
-                    b.ToTable("Schedules", (string)null);
+                    b.ToTable("Schedules");
                 });
 
             modelBuilder.Entity("Scheduler.DomainModel.Model.Schedule.Subject", b =>
@@ -323,7 +324,7 @@ namespace Scheduler.Repositories.Migrations
 
                     b.HasIndex("TeacherId");
 
-                    b.ToTable("Subjects", (string)null);
+                    b.ToTable("Subjects");
                 });
 
             modelBuilder.Entity("Scheduler.DomainModel.Model.University.Department", b =>
@@ -337,7 +338,7 @@ namespace Scheduler.Repositories.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Departments", (string)null);
+                    b.ToTable("Departments");
                 });
 
             modelBuilder.Entity("Scheduler.DomainModel.Model.University.Faculty", b =>
@@ -351,7 +352,7 @@ namespace Scheduler.Repositories.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Faculties", (string)null);
+                    b.ToTable("Faculties");
                 });
 
             modelBuilder.Entity("Scheduler.DomainModel.Model.University.Group", b =>
@@ -373,7 +374,7 @@ namespace Scheduler.Repositories.Migrations
 
                     b.HasIndex("FacultyId");
 
-                    b.ToTable("Groups", (string)null);
+                    b.ToTable("Groups");
                 });
 
             modelBuilder.Entity("Scheduler.Repositories.Database.AuditoriumTypes", b =>
@@ -383,7 +384,7 @@ namespace Scheduler.Repositories.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AuditoriumTypes", (string)null);
+                    b.ToTable("AuditoriumTypes");
 
                     b.HasData(
                         new
@@ -402,41 +403,41 @@ namespace Scheduler.Repositories.Migrations
 
             modelBuilder.Entity("Scheduler.Repositories.Database.Days", b =>
                 {
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Days", (string)null);
+                    b.ToTable("Days");
 
                     b.HasData(
                         new
                         {
-                            Id = 0
+                            Id = "Monday"
                         },
                         new
                         {
-                            Id = 1
+                            Id = "Tuesday"
                         },
                         new
                         {
-                            Id = 2
+                            Id = "Wednesday"
                         },
                         new
                         {
-                            Id = 3
+                            Id = "Thursday"
                         },
                         new
                         {
-                            Id = 4
+                            Id = "Friday"
                         },
                         new
                         {
-                            Id = 5
+                            Id = "Saturday"
                         },
                         new
                         {
-                            Id = 6
+                            Id = "Sunday"
                         });
                 });
 

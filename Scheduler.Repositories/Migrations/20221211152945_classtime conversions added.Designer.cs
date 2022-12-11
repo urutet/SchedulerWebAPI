@@ -12,8 +12,8 @@ using Scheduler.Repositories.Database;
 namespace Scheduler.Repositories.Migrations
 {
     [DbContext(typeof(SchedulerDbContext))]
-    [Migration("20221211114122_classtime days added")]
-    partial class classtimedaysadded
+    [Migration("20221211152945_classtime conversions added")]
+    partial class classtimeconversionsadded
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -253,8 +253,9 @@ namespace Scheduler.Repositories.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("Day")
-                        .HasColumnType("int");
+                    b.Property<string>("Day")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<TimeSpan>("EndTime")
                         .HasColumnType("time");
@@ -404,8 +405,8 @@ namespace Scheduler.Repositories.Migrations
 
             modelBuilder.Entity("Scheduler.Repositories.Database.Days", b =>
                 {
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
@@ -414,31 +415,31 @@ namespace Scheduler.Repositories.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 0
+                            Id = "Monday"
                         },
                         new
                         {
-                            Id = 1
+                            Id = "Tuesday"
                         },
                         new
                         {
-                            Id = 2
+                            Id = "Wednesday"
                         },
                         new
                         {
-                            Id = 3
+                            Id = "Thursday"
                         },
                         new
                         {
-                            Id = 4
+                            Id = "Friday"
                         },
                         new
                         {
-                            Id = 5
+                            Id = "Saturday"
                         },
                         new
                         {
-                            Id = 6
+                            Id = "Sunday"
                         });
                 });
 

@@ -33,11 +33,11 @@ public class ClassTimeController : ControllerBase
         return classTimes;
     }
 
-    /*[HttpGet("days")]
+    [HttpGet("days")]
     public async Task<IReadOnlyCollection<string>> getDays()
     {
         return Enum.GetNames<Day>();
-    }*/
+    }
 
     [HttpPost]
     [Authorize(AuthenticationSchemes = "Bearer")]

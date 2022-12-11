@@ -4,22 +4,22 @@
 
 namespace Scheduler.Repositories.Migrations
 {
-    public partial class classtimedaysadded : Migration
+    public partial class classtimeconversionsadded : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<int>(
+            migrationBuilder.AddColumn<string>(
                 name: "Day",
                 table: "ClassTimes",
-                type: "int",
+                type: "nvarchar(450)",
                 nullable: false,
-                defaultValue: 0);
+                defaultValue: "");
 
             migrationBuilder.CreateTable(
                 name: "Days",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -31,13 +31,13 @@ namespace Scheduler.Repositories.Migrations
                 column: "Id",
                 values: new object[]
                 {
-                    0,
-                    1,
-                    2,
-                    3,
-                    4,
-                    5,
-                    6
+                    "Monday",
+                    "Tuesday",
+                    "Wednesday",
+                    "Thursday",
+                    "Friday",
+                    "Saturday",
+                    "Sunday"
                 });
 
             migrationBuilder.CreateIndex(
