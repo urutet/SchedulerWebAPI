@@ -61,9 +61,9 @@ public class AuthController : ControllerBase
             return BadRequest(ErrorResponse.CreateFromApiError(ApiError.UserWithTheSameEmailAlreadyExist));
         }
 
-        var customerId = await _studentService.AddStudentAsync(register.Email, register.Password);
+        var studentId = await _studentService.AddStudentAsync(register.Email, register.Password);
 
-        var authData = await _authService.GetAuthDataAsync(customerId);
+        var authData = await _authService.GetAuthDataAsync(studentId);
 
         return authData;
     }

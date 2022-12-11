@@ -4,5 +4,6 @@ public enum ApiError
 {
     UserDoesNotExist,
     UserWithTheSameEmailAlreadyExist,
-    PasswordIsInvalid
+    PasswordIsInvalid,
+    DepartmentDoesNotExist
 }

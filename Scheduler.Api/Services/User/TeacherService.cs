@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Scheduler.DomainModel.Identity;
+using Scheduler.Models.University;
 using Scheduler.Repositories.Constants;
 using Scheduler.Repositories.Repositories.UnitOfWork;
 using Scheduler.Repositories.Repositories.User.Teacher;
@@ -36,6 +38,13 @@ public class TeacherService : ITeacherService
         return await teacherRepository.GetByEmailAsync(email);
     }
 
+    public async Task<IReadOnlyCollection<TeacherUser>> GetAllTeachers()
+    {
+        var teacherRepository = _unitOfWork.GetRepository<TeacherUser, TeacherRepository>();
+
+        return await teacherRepository.GetQuery().ToListAsync();
+    }
+
     public async Task<string> AddTeacherAsync(string email, string password)
     {
         var teacherId = Guid.NewGuid().ToString();
@@ -57,6 +66,19 @@ public class TeacherService : ITeacherService
         return teacherId;
     }
 
+    public async Task<string> AddTeacherAsync(TeacherUser teacherUser, string password)
+    {
+        var result = await _userManager.CreateAsync(teacherUser, password);
+        if (!result.Succeeded)
+        {
+            throw new InvalidOperationException($"Failed to create user {teacherUser.Email}");
+        }
+
+        await _userManager.AddToRoleAsync(teacherUser, Roles.Teacher);
+
+        return teacherUser.Id;
+    }
+
     public async Task<bool> DeleteTeacherAsync(string id)
     {
         var teacher = await GetTeacherByIdAsync(id);
@@ -70,6 +92,27 @@ public class TeacherService : ITeacherService
         {
             return false;
         }
+
+        return true;
+    }
+
+    public async Task<bool> UpdateTeacher(string id, EditTeacher teacherUser)
+    {
+        var teacherRepository = _unitOfWork.GetRepository<TeacherUser, TeacherRepository>();
+        
+        var editTeacher = await teacherRepository.GetByIdAsync(id);
+        if (editTeacher is null)
+        {
+            return false;
+        }
+
+        editTeacher.Name = teacherUser.Name;
+        editTeacher.Email = teacherUser.Email;
+        editTeacher.departmentId = teacherUser.departmentId;
+        editTeacher.Photo = teacherUser.Photo;
+
+        teacherRepository.Update(editTeacher);
+        await _unitOfWork.SaveChangesAsync();
 
         return true;
     }

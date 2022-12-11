@@ -1,18 +1,26 @@
 using System.Text;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Scheduler.Authorization.Requirements;
 using Scheduler.Authorization.Requirements.Roles;
 using Scheduler.Common.Options;
+using Scheduler.Creators.Schedule;
+using Scheduler.Creators.Schedule.ClassTime;
+using Scheduler.Creators.University.Department;
+using Scheduler.Creators.University.Faculty;
+using Scheduler.Creators.University.Group;
+using Scheduler.Creators.University.Teacher;
 using Scheduler.JWT;
 using Scheduler.Repositories.Database;
 using Scheduler.Repositories.Database.Initializer.IDatabaseInitializer;
 using Scheduler.Repositories.Repositories.UnitOfWork;
 using Scheduler.Services.Auth;
+using Scheduler.Services.Schedule;
+using Scheduler.Services.University;
 using Scheduler.Services.User;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -66,7 +74,12 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(o =>
     .AddEntityFrameworkStores<SchedulerDbContext>()
     .AddDefaultTokenProviders();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
+
 builder.Services.AddDbContext<SchedulerDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection"),
@@ -79,7 +92,20 @@ builder.Services.AddSingleton<IUnitOfWorkFactory<UnitOfWork>, UnitOfWorkFactory>
 builder.Services.AddSingleton<IJwtGenerator, JwtGenerator>();
 builder.Services.AddSingleton<IAuthService, AuthService>();
 builder.Services.AddSingleton<IStudentService, StudentService>();
-builder.Services.AddSingleton<ITeacherService, TeacherService>();
+builder.Services.AddScoped<ITeacherService, TeacherService>();
+builder.Services.AddSingleton<IAuditoriumService, AuditoriumService>();
+builder.Services.AddSingleton<IClassTimeService, ClassTimeService>();
+builder.Services.AddSingleton<IScheduleService, ScheduleService>();
+builder.Services.AddSingleton<ISubjectService, SubjectService>();
+builder.Services.AddSingleton<IDepartmentService, DepartmentService>();
+builder.Services.AddSingleton<IFacultyService, FacultyService>();
+builder.Services.AddSingleton<IGroupService, GroupService>();
+builder.Services.AddSingleton<IFacultyCreator, FacultyCreator>();
+builder.Services.AddSingleton<IGroupCreator, GroupCreator>();
+builder.Services.AddSingleton<IDepartmentCreator, DepartmentCreator>();
+builder.Services.AddSingleton<ITeacherCreator, TeacherCreator>();
+builder.Services.AddSingleton<IAuditoriumCreator, AuditoriumCreator>();
+builder.Services.AddSingleton<IClassTimeCreator, ClassTimeCreator>();
 
 builder.Services.AddCors(options =>
 {

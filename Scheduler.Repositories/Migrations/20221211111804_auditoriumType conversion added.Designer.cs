@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Scheduler.Repositories.Database;
 
@@ -11,9 +12,10 @@ using Scheduler.Repositories.Database;
 namespace Scheduler.Repositories.Migrations
 {
     [DbContext(typeof(SchedulerDbContext))]
-    partial class SchedulerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221211111804_auditoriumType conversion added")]
+    partial class auditoriumTypeconversionadded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -243,16 +245,13 @@ namespace Scheduler.Repositories.Migrations
 
                     b.HasIndex("Type");
 
-                    b.ToTable("Auditoria", (string)null);
+                    b.ToTable("Auditoria");
                 });
 
             modelBuilder.Entity("Scheduler.DomainModel.Model.Schedule.ClassTime", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("Day")
-                        .HasColumnType("int");
 
                     b.Property<TimeSpan>("EndTime")
                         .HasColumnType("time");
@@ -262,9 +261,7 @@ namespace Scheduler.Repositories.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Day");
-
-                    b.ToTable("ClassTimes", (string)null);
+                    b.ToTable("ClassTimes");
                 });
 
             modelBuilder.Entity("Scheduler.DomainModel.Model.Schedule.Schedule", b =>
@@ -284,7 +281,7 @@ namespace Scheduler.Repositories.Migrations
                     b.HasIndex("GroupId")
                         .IsUnique();
 
-                    b.ToTable("Schedules", (string)null);
+                    b.ToTable("Schedules");
                 });
 
             modelBuilder.Entity("Scheduler.DomainModel.Model.Schedule.Subject", b =>
@@ -323,7 +320,7 @@ namespace Scheduler.Repositories.Migrations
 
                     b.HasIndex("TeacherId");
 
-                    b.ToTable("Subjects", (string)null);
+                    b.ToTable("Subjects");
                 });
 
             modelBuilder.Entity("Scheduler.DomainModel.Model.University.Department", b =>
@@ -337,7 +334,7 @@ namespace Scheduler.Repositories.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Departments", (string)null);
+                    b.ToTable("Departments");
                 });
 
             modelBuilder.Entity("Scheduler.DomainModel.Model.University.Faculty", b =>
@@ -351,7 +348,7 @@ namespace Scheduler.Repositories.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Faculties", (string)null);
+                    b.ToTable("Faculties");
                 });
 
             modelBuilder.Entity("Scheduler.DomainModel.Model.University.Group", b =>
@@ -373,7 +370,7 @@ namespace Scheduler.Repositories.Migrations
 
                     b.HasIndex("FacultyId");
 
-                    b.ToTable("Groups", (string)null);
+                    b.ToTable("Groups");
                 });
 
             modelBuilder.Entity("Scheduler.Repositories.Database.AuditoriumTypes", b =>
@@ -383,7 +380,7 @@ namespace Scheduler.Repositories.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AuditoriumTypes", (string)null);
+                    b.ToTable("AuditoriumTypes");
 
                     b.HasData(
                         new
@@ -397,46 +394,6 @@ namespace Scheduler.Repositories.Migrations
                         new
                         {
                             Id = "Practical"
-                        });
-                });
-
-            modelBuilder.Entity("Scheduler.Repositories.Database.Days", b =>
-                {
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Days", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 0
-                        },
-                        new
-                        {
-                            Id = 1
-                        },
-                        new
-                        {
-                            Id = 2
-                        },
-                        new
-                        {
-                            Id = 3
-                        },
-                        new
-                        {
-                            Id = 4
-                        },
-                        new
-                        {
-                            Id = 5
-                        },
-                        new
-                        {
-                            Id = 6
                         });
                 });
 
@@ -537,15 +494,6 @@ namespace Scheduler.Repositories.Migrations
                     b.HasOne("Scheduler.Repositories.Database.AuditoriumTypes", null)
                         .WithMany()
                         .HasForeignKey("Type")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Scheduler.DomainModel.Model.Schedule.ClassTime", b =>
-                {
-                    b.HasOne("Scheduler.Repositories.Database.Days", null)
-                        .WithMany()
-                        .HasForeignKey("Day")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
