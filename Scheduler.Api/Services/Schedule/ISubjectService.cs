@@ -5,6 +5,8 @@ namespace Scheduler.Services.Schedule;
 public interface ISubjectService
 {
     Task<IReadOnlyCollection<Subject>> GetSubject();
+    
+    Task<Subject> GetSubjectById(string id);
 
     Task AddSubject(Subject subject);
 

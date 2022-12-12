@@ -52,8 +52,9 @@ public class GroupService : IGroupService
         }
 
         editGroup.Name = group.Name;
-        editGroup.Schedule = group.Schedule;
+        editGroup.Schedules = group.Schedules;
         editGroup.Year = group.Year;
+        editGroup.facultyId = group.facultyId;
 
         groupsRepository.Update(editGroup);
         await _unitOfWork.SaveChangesAsync();

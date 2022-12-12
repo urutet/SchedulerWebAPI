@@ -25,6 +25,13 @@ public class SubjectService : ISubjectService
         return schedules;
     }
 
+    public async Task<Subject> GetSubjectById(string id)
+    {
+        var subjectsRepository = _unitOfWork.GetRepository<Subject, SubjectRepository>();
+
+        return await subjectsRepository.GetByIdAsync(id);
+    }
+
     public async Task AddSubject(Subject subject)
     {
         var subjectsRepository = _unitOfWork.GetRepository<Subject, SubjectRepository>();
@@ -44,11 +51,10 @@ public class SubjectService : ISubjectService
             return false;
         }
 
-        editSubject.Auditorium = subject.Auditorium;
+        editSubject.auditoriumId = subject.auditoriumId;
         editSubject.Name = subject.Name;
-        editSubject.Teacher = subject.Teacher;
-        editSubject.Week = subject.Week;
-        editSubject.ClassTime = subject.ClassTime;
+        editSubject.teacherId = subject.teacherId;
+        editSubject.classTimeId = subject.classTimeId;
 
         subjectsRepository.Update(editSubject);
         await _unitOfWork.SaveChangesAsync();

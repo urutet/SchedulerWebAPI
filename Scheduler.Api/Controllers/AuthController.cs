@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Scheduler.Authorization.Requirements;
+using Scheduler.DomainModel.Identity;
 using Scheduler.Models.Auth;
 using Scheduler.Models.Errors;
 using Scheduler.Repositories.Repositories.User.Student;

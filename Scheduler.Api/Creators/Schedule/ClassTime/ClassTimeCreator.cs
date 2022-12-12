@@ -10,8 +10,8 @@ public class ClassTimeCreator : IClassTimeCreator
         {
             Id = Guid.NewGuid().ToString(),
             Day = createClassTime.Day,
-            StartTime = createClassTime.StartTime,
-            EndTime = createClassTime.EndTime
+            StartTime = createClassTime.StartTime.LocalDateTime,
+            EndTime = createClassTime.EndTime.LocalDateTime
         };
     }
 }

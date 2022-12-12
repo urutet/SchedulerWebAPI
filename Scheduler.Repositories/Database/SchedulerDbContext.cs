@@ -30,6 +30,8 @@ public class SchedulerDbContext : IdentityDbContext
     public DbSet<Faculty> Faculties { get; set; }
     
     public DbSet<Group> Groups { get; set; }
+    
+    public DbSet<Comment> Comments { get; set; }
 
     public SchedulerDbContext(DbContextOptions<SchedulerDbContext> options)
         : base(options)
@@ -49,14 +51,14 @@ public class SchedulerDbContext : IdentityDbContext
         builder.Entity<IdentityUserClaim<string>>().ToTable("UserClaims");
         builder.Entity<IdentityRoleClaim<string>>().ToTable("RoleClaims");
 
-        builder.Entity<ClassTime>(builder =>
+        /*builder.Entity<ClassTime>(builder =>
         {
             builder.Property(x => x.StartTime)
                 .HasConversion<TimeOnlyConverter, TimeOnlyComparer>();
             
             builder.Property(x => x.EndTime)
                 .HasConversion<TimeOnlyConverter, TimeOnlyComparer>();
-        });
+        });*/
         
         builder.Entity<AuditoriumTypes>(entityBuilder =>
         {
@@ -89,6 +91,10 @@ public class SchedulerDbContext : IdentityDbContext
         builder.Entity<ClassTime>().HasOne<Days>()
             .WithMany()
             .HasForeignKey(k => k.Day);
+
+        builder.Entity<Schedule>()
+            .HasMany<Subject>(s => s.Subjects)
+            .WithMany(s => s.Schedules);
     }
 }
 

@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Scheduler.DomainModel.Model.Schedule;
 using Scheduler.Repositories.Repositories.Schedule;
 using Scheduler.Repositories.Repositories.UnitOfWork;
 
@@ -23,17 +24,29 @@ public class ScheduleService : IScheduleService
         if (groupId is not null)
             baseQuery = baseQuery.Where(s => s.GroupId == groupId);
 
-        var schedules = await baseQuery.ToListAsync();
+        var schedules = await baseQuery.Include(s => s.Subjects).ToListAsync();
 
         return schedules;
     }
 
-    public async Task AddSchedule(DomainModel.Model.Schedule.Schedule schedule)
+    public async Task<DomainModel.Model.Schedule.Schedule> GetSchedule(string scheduleId)
+    {
+        var scheduleRepository = _unitOfWork.GetRepository<DomainModel.Model.Schedule.Schedule, ScheduleRepository>();
+
+        return await scheduleRepository.GetByIdAsync(scheduleId);
+    }
+
+    public async Task AddSchedule(DomainModel.Model.Schedule.Schedule schedule, List<string> SubjectIds)
     {
         var scheduleRepository = _unitOfWork.GetRepository<DomainModel.Model.Schedule.Schedule, ScheduleRepository>();
         
         scheduleRepository.Add(schedule);
-
+        var subjectsRepository = _unitOfWork.GetRepository<Subject, SubjectRepository>();
+        var subjects = await subjectsRepository.GetQuery().ToListAsync();
+        
+        var subjectsToAdd = subjects.Where(s => SubjectIds.Contains(s.Id)).ToList();
+        schedule.Subjects.AddRange(subjectsToAdd);
+        
         await _unitOfWork.SaveChangesAsync();
     }
 
@@ -49,7 +62,6 @@ public class ScheduleService : IScheduleService
 
         editSchedule.Week = schedule.Week;
         editSchedule.GroupId = schedule.GroupId;
-        editSchedule.Group = schedule.Group;
         editSchedule.Subjects = schedule.Subjects;
 
         scheduleRepository.Update(editSchedule);

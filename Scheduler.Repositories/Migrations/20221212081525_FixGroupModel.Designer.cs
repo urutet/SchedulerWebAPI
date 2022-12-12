@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Scheduler.Repositories.Database;
 
@@ -11,9 +12,10 @@ using Scheduler.Repositories.Database;
 namespace Scheduler.Repositories.Migrations
 {
     [DbContext(typeof(SchedulerDbContext))]
-    partial class SchedulerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221212081525_FixGroupModel")]
+    partial class FixGroupModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -266,29 +268,6 @@ namespace Scheduler.Repositories.Migrations
                     b.HasIndex("Day");
 
                     b.ToTable("ClassTimes");
-                });
-
-            modelBuilder.Entity("Scheduler.DomainModel.Model.Schedule.Comment", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("TeacherUserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("comment")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("teacherId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TeacherUserId");
-
-                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("Scheduler.DomainModel.Model.Schedule.Schedule", b =>
@@ -578,13 +557,6 @@ namespace Scheduler.Repositories.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Scheduler.DomainModel.Model.Schedule.Comment", b =>
-                {
-                    b.HasOne("Scheduler.DomainModel.Identity.TeacherUser", null)
-                        .WithMany("Comments")
-                        .HasForeignKey("TeacherUserId");
-                });
-
             modelBuilder.Entity("Scheduler.DomainModel.Model.Schedule.Schedule", b =>
                 {
                     b.HasOne("Scheduler.DomainModel.Model.University.Group", "Group")
@@ -664,11 +636,6 @@ namespace Scheduler.Repositories.Migrations
             modelBuilder.Entity("Scheduler.DomainModel.Model.University.Group", b =>
                 {
                     b.Navigation("Schedules");
-                });
-
-            modelBuilder.Entity("Scheduler.DomainModel.Identity.TeacherUser", b =>
-                {
-                    b.Navigation("Comments");
                 });
 #pragma warning restore 612, 618
         }

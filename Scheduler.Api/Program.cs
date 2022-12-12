@@ -10,6 +10,9 @@ using Scheduler.Authorization.Requirements.Roles;
 using Scheduler.Common.Options;
 using Scheduler.Creators.Schedule;
 using Scheduler.Creators.Schedule.ClassTime;
+using Scheduler.Creators.Schedule.Comment;
+using Scheduler.Creators.Schedule.Schedule;
+using Scheduler.Creators.Schedule.Subject;
 using Scheduler.Creators.University.Department;
 using Scheduler.Creators.University.Faculty;
 using Scheduler.Creators.University.Group;
@@ -106,6 +109,9 @@ builder.Services.AddSingleton<IDepartmentCreator, DepartmentCreator>();
 builder.Services.AddSingleton<ITeacherCreator, TeacherCreator>();
 builder.Services.AddSingleton<IAuditoriumCreator, AuditoriumCreator>();
 builder.Services.AddSingleton<IClassTimeCreator, ClassTimeCreator>();
+builder.Services.AddSingleton<ISubjectCreator, SubjectCreator>();
+builder.Services.AddSingleton<IScheduleCreator, ScheduleCreator>();
+builder.Services.AddSingleton<ICommentCreator, CommentCreator>();
 
 builder.Services.AddCors(options =>
 {

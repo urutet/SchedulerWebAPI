@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Scheduler.Repositories.Database;
 
@@ -11,9 +12,10 @@ using Scheduler.Repositories.Database;
 namespace Scheduler.Repositories.Migrations
 {
     [DbContext(typeof(SchedulerDbContext))]
-    partial class SchedulerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221211163500_facultyId added to group")]
+    partial class facultyIdaddedtogroup
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -255,40 +257,17 @@ namespace Scheduler.Repositories.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime>("EndTime")
-                        .HasColumnType("datetime2");
+                    b.Property<TimeSpan>("EndTime")
+                        .HasColumnType("time");
 
-                    b.Property<DateTime>("StartTime")
-                        .HasColumnType("datetime2");
+                    b.Property<TimeSpan>("StartTime")
+                        .HasColumnType("time");
 
                     b.HasKey("Id");
 
                     b.HasIndex("Day");
 
                     b.ToTable("ClassTimes");
-                });
-
-            modelBuilder.Entity("Scheduler.DomainModel.Model.Schedule.Comment", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("TeacherUserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("comment")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("teacherId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TeacherUserId");
-
-                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("Scheduler.DomainModel.Model.Schedule.Schedule", b =>
@@ -305,7 +284,8 @@ namespace Scheduler.Repositories.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GroupId");
+                    b.HasIndex("GroupId")
+                        .IsUnique();
 
                     b.ToTable("Schedules");
                 });
@@ -315,25 +295,36 @@ namespace Scheduler.Repositories.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("AuditoriumId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ClassTimeId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("auditoriumId")
-                        .IsRequired()
+                    b.Property<string>("ScheduleId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("classTimeId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("TeacherId")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("teacherId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Week")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("auditoriumId");
+                    b.HasIndex("AuditoriumId");
+
+                    b.HasIndex("ClassTimeId");
+
+                    b.HasIndex("ScheduleId");
+
+                    b.HasIndex("TeacherId");
 
                     b.ToTable("Subjects");
                 });
@@ -453,21 +444,6 @@ namespace Scheduler.Repositories.Migrations
                         });
                 });
 
-            modelBuilder.Entity("ScheduleSubject", b =>
-                {
-                    b.Property<string>("SchedulesId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("SubjectsId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("SchedulesId", "SubjectsId");
-
-                    b.HasIndex("SubjectsId");
-
-                    b.ToTable("ScheduleSubject");
-                });
-
             modelBuilder.Entity("Scheduler.DomainModel.Identity.ManagerUser", b =>
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
@@ -578,18 +554,11 @@ namespace Scheduler.Repositories.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Scheduler.DomainModel.Model.Schedule.Comment", b =>
-                {
-                    b.HasOne("Scheduler.DomainModel.Identity.TeacherUser", null)
-                        .WithMany("Comments")
-                        .HasForeignKey("TeacherUserId");
-                });
-
             modelBuilder.Entity("Scheduler.DomainModel.Model.Schedule.Schedule", b =>
                 {
                     b.HasOne("Scheduler.DomainModel.Model.University.Group", "Group")
-                        .WithMany("Schedules")
-                        .HasForeignKey("GroupId")
+                        .WithOne("Schedule")
+                        .HasForeignKey("Scheduler.DomainModel.Model.Schedule.Schedule", "GroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -598,11 +567,31 @@ namespace Scheduler.Repositories.Migrations
 
             modelBuilder.Entity("Scheduler.DomainModel.Model.Schedule.Subject", b =>
                 {
-                    b.HasOne("Scheduler.DomainModel.Model.Schedule.Auditorium", null)
+                    b.HasOne("Scheduler.DomainModel.Model.Schedule.Auditorium", "Auditorium")
                         .WithMany("Subjects")
-                        .HasForeignKey("auditoriumId")
+                        .HasForeignKey("AuditoriumId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Scheduler.DomainModel.Model.Schedule.ClassTime", "ClassTime")
+                        .WithMany()
+                        .HasForeignKey("ClassTimeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Scheduler.DomainModel.Model.Schedule.Schedule", null)
+                        .WithMany("Subjects")
+                        .HasForeignKey("ScheduleId");
+
+                    b.HasOne("Scheduler.DomainModel.Identity.TeacherUser", "Teacher")
+                        .WithMany()
+                        .HasForeignKey("TeacherId");
+
+                    b.Navigation("Auditorium");
+
+                    b.Navigation("ClassTime");
+
+                    b.Navigation("Teacher");
                 });
 
             modelBuilder.Entity("Scheduler.DomainModel.Model.University.Group", b =>
@@ -610,21 +599,6 @@ namespace Scheduler.Repositories.Migrations
                     b.HasOne("Scheduler.DomainModel.Model.University.Faculty", null)
                         .WithMany("Groups")
                         .HasForeignKey("facultyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ScheduleSubject", b =>
-                {
-                    b.HasOne("Scheduler.DomainModel.Model.Schedule.Schedule", null)
-                        .WithMany()
-                        .HasForeignKey("SchedulesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Scheduler.DomainModel.Model.Schedule.Subject", null)
-                        .WithMany()
-                        .HasForeignKey("SubjectsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -651,6 +625,11 @@ namespace Scheduler.Repositories.Migrations
                     b.Navigation("Subjects");
                 });
 
+            modelBuilder.Entity("Scheduler.DomainModel.Model.Schedule.Schedule", b =>
+                {
+                    b.Navigation("Subjects");
+                });
+
             modelBuilder.Entity("Scheduler.DomainModel.Model.University.Department", b =>
                 {
                     b.Navigation("Teachers");
@@ -663,12 +642,8 @@ namespace Scheduler.Repositories.Migrations
 
             modelBuilder.Entity("Scheduler.DomainModel.Model.University.Group", b =>
                 {
-                    b.Navigation("Schedules");
-                });
-
-            modelBuilder.Entity("Scheduler.DomainModel.Identity.TeacherUser", b =>
-                {
-                    b.Navigation("Comments");
+                    b.Navigation("Schedule")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

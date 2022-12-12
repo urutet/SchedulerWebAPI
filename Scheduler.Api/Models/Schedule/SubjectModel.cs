@@ -1,8 +1,6 @@
-﻿using Scheduler.DomainModel.Identity;
+﻿namespace Scheduler.Models.Schedule;
 
-namespace Scheduler.DomainModel.Model.Schedule;
-
-public class Subject : IHasId
+public class SubjectModel
 {
     public string Id { get; set; }
     
@@ -13,6 +11,4 @@ public class Subject : IHasId
     public string auditoriumId { get; set; }
     
     public string teacherId { get; set; }
-    
-    public IReadOnlyCollection<Schedule> Schedules { get; set; }
 }

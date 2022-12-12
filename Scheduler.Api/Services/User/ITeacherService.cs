@@ -1,4 +1,5 @@
 ﻿using Scheduler.DomainModel.Identity;
+using Scheduler.DomainModel.Model.Schedule;
 using Scheduler.Models.University;
 
 namespace Scheduler.Services.User;
@@ -17,4 +18,6 @@ public interface ITeacherService
     Task<bool> DeleteTeacherAsync(string id);
 
     Task<bool> UpdateTeacher(string id, EditTeacher teacherUser);
+
+    Task<bool> AddCommentToTeacher(string id, Comment comment);
 }

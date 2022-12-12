@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Scheduler.DomainModel.Identity;
+using Scheduler.DomainModel.Model.Schedule;
 using Scheduler.Models.University;
 using Scheduler.Repositories.Constants;
 using Scheduler.Repositories.Repositories.UnitOfWork;
@@ -42,7 +43,7 @@ public class TeacherService : ITeacherService
     {
         var teacherRepository = _unitOfWork.GetRepository<TeacherUser, TeacherRepository>();
 
-        return await teacherRepository.GetQuery().ToListAsync();
+        return await teacherRepository.GetQuery().Include(t => t.Comments).ToListAsync();
     }
 
     public async Task<string> AddTeacherAsync(string email, string password)
@@ -65,6 +66,7 @@ public class TeacherService : ITeacherService
 
         return teacherId;
     }
+    
 
     public async Task<string> AddTeacherAsync(TeacherUser teacherUser, string password)
     {
@@ -110,6 +112,25 @@ public class TeacherService : ITeacherService
         editTeacher.Email = teacherUser.Email;
         editTeacher.departmentId = teacherUser.departmentId;
         editTeacher.Photo = teacherUser.Photo;
+
+        teacherRepository.Update(editTeacher);
+        await _unitOfWork.SaveChangesAsync();
+
+        return true;
+    }
+
+    public async Task<bool> AddCommentToTeacher(string id, Comment comment)
+    {
+        var teacherRepository = _unitOfWork.GetRepository<TeacherUser, TeacherRepository>();
+
+        var editTeacher = await teacherRepository.GetQuery()
+            .Include(t => t.Comments).FirstOrDefaultAsync(t => t.Id == id);
+        if (editTeacher is null)
+        {
+            return false;
+        }
+
+        editTeacher.Comments.Add(comment);
 
         teacherRepository.Update(editTeacher);
         await _unitOfWork.SaveChangesAsync();

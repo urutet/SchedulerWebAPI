@@ -9,5 +9,6 @@ public class Group : IHasId
     
     public int Year { get; set; }
     
-    public Schedule.Schedule Schedule { get; set; }
+    public string facultyId { get; set; }
+    public IReadOnlyCollection<Schedule.Schedule> Schedules { get; set; }
 }

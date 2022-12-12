@@ -2,10 +2,12 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Scheduler.Authorization.Requirements;
+using Scheduler.Creators.Schedule.Comment;
 using Scheduler.Creators.University.Teacher;
 using Scheduler.DomainModel.Identity;
 using Scheduler.Models.Auth;
 using Scheduler.Models.Errors;
+using Scheduler.Models.Schedule;
 using Scheduler.Models.University;
 using Scheduler.Repositories.Constants;
 using Scheduler.Services.Auth;
@@ -19,13 +21,16 @@ public class TeacherController : ControllerBase
 {
     private ITeacherService _teacherService;
     private ITeacherCreator _teacherCreator;
+    private ICommentCreator _commentCreator;
     
     public TeacherController(
         ITeacherService teacherService,
-        ITeacherCreator teacherCreator)
+        ITeacherCreator teacherCreator,
+        ICommentCreator commentCreator)
     {
         _teacherService = teacherService;
         _teacherCreator = teacherCreator;
+        _commentCreator = commentCreator;
     }
     
     [HttpPost]
@@ -87,6 +92,25 @@ public class TeacherController : ControllerBase
         }
 
         var isEditSuccessful = await _teacherService.UpdateTeacher(editTeacher.Id, teacher);
+        if (!isEditSuccessful)
+        {
+            return BadRequest();
+        }
+
+        return Ok();
+    }
+    
+    [HttpPut("comment/{id}")]
+    public async Task<IActionResult> AddCommentToTeacher(string id, [FromBody] CreateComment createComment)
+    {
+        var comment = _commentCreator.CreateFrom(createComment);
+        var editTeacher = await _teacherService.GetTeacherByIdAsync(id);
+        if (editTeacher is null)
+        {
+            return BadRequest(ErrorResponse.CreateFromApiError(ApiError.DepartmentDoesNotExist));
+        }
+
+        var isEditSuccessful = await _teacherService.AddCommentToTeacher(editTeacher.Id, comment);
         if (!isEditSuccessful)
         {
             return BadRequest();

@@ -6,7 +6,7 @@ public class CreateClassTime
 {
     public Day Day { get; set; }
     
-    public TimeOnly StartTime { get; set; }
+    public DateTimeOffset StartTime { get; set; }
     
-    public TimeOnly EndTime { get; set; }
+    public DateTimeOffset EndTime { get; set; }
 }

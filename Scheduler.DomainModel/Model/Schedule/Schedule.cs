@@ -10,8 +10,8 @@ public class Schedule : IHasId
     
     public int Week { get; set; }
     public string GroupId { get; set; }
-    
+
     public Group Group { get; set; }
     
-    public IReadOnlyCollection<Subject> Subjects { get; set; }
+    public List<Subject> Subjects { get; set; }
 }

@@ -10,7 +10,8 @@ public class GroupCreator : IGroupCreator
         {
             Id = Guid.NewGuid().ToString(),
             Name = createGroup.Name,
-            Year = createGroup.Year
+            Year = createGroup.Year,
+            facultyId = createGroup.facultyId
         };
     }
 }
